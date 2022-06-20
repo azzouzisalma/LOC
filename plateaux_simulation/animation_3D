@@ -1,0 +1,41 @@
+import torch
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import numpy as np
+
+L = torch.load('const.pt')
+
+fig = plt.figure()
+ax = plt.axes(projection = "3d")
+constellations, = ax.plot3D([],[],[],'*')
+ax.set_xlim([-1,1])
+ax.set_ylim([-1,1])
+ax.set_zlim([-1,1])
+#print(len(L_x))
+def animate(k):
+    Const = L[k].detach().numpy() #Matrice de taille M*n
+    x = Const[:,0]
+    y = Const[:,1]
+    z = Const[:,2]
+    constellations.set_data(x ,y)  
+    constellations.set_3d_properties(z)
+    return constellations
+
+# draw sphere
+#u, v = np.mgrid[0:2*np.pi:20j, 0:np.pi:10j]
+#x = np.cos(u)*np.sin(v)
+#y = np.sin(u)*np.sin(v)
+#z = np.cos(v)
+r = 1
+pi = np.pi
+cos = np.cos
+sin = np.sin
+phi, theta = np.mgrid[0.0:pi:100j, 0.0:2.0*pi:100j]
+x = r*sin(phi)*cos(theta)
+y = r*sin(phi)*sin(theta)
+z = r*cos(phi)
+#ax.plot_wireframe(x, y, z, color="gray")
+ax.plot_surface(x, y, z,  rstride=1, cstride=1, color='c', alpha=0.6, linewidth=0)
+
+ani = animation.FuncAnimation(fig = fig, func=animate, frames=range(len(L)) ,interval= 500, repeat= False)
+plt.show()
